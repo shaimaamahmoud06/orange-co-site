@@ -390,6 +390,17 @@
   /* store to beige: the deep end of the store's shade warms into the cream over most of a screen */
   .to-beige { position: relative; height: 60vh; margin: -3px 0 -1px;
     background: linear-gradient(to bottom, #160c08 0%, #3a2216 18%, #7a5a44 42%, #c9ab8e 70%, #ead2b8 88%, var(--beige) 100%); }
+
+  /* hero loader: one gold hairline filling with the watch film's real progress, then the arrow takes its place */
+  .loader { position: absolute; left: 50%; bottom: calc(6vh + 15px); width: 132px; height: 1px; margin-left: -66px;
+            background: rgba(237, 208, 166, .16); overflow: hidden; transition: opacity 1s var(--ease) .25s; }
+  .loader i { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(217, 178, 111, .6), var(--gold));
+              transform: scaleX(0); transform-origin: left center; transition: transform .6s var(--ease); }
+  html:not(.holding) .loader { opacity: 0; }
+  html.holding, html.holding body { overflow: hidden; }
+  html.holding body { overscroll-behavior: none; touch-action: none; }
+  .arrow { transition: opacity 1s var(--ease); }
+  html.holding .arrow { opacity: 0 !important; }
 </style>
 </head>
 <body>
@@ -404,6 +415,7 @@
       <div class="en">
         <p class="route" data-en="LONDON · PARIS · TRIPOLI" data-ar="لندن · باريس · طرابلس">LONDON · PARIS · TRIPOLI</p>
       </div>
+      <div class="loader" data-loader aria-hidden="true"><i></i></div>
       <svg class="arrow" viewBox="0 0 16 34" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 1v31M3 27l5 5 5-5"/></svg>
     </div>
   </section>
@@ -552,9 +564,9 @@
     </footer>
   </div>
 
-  <script src="lang.js?v=20261116b"></script>
-  <script src="scroll-seq.js?v=20261116b" defer></script>
-  <script src="globe.js?v=20261116b" defer></script>
-  <script src="rest.js?v=20261116b" defer></script>
+  <script src="lang.js?v=20261116c"></script>
+  <script src="scroll-seq.js?v=20261116c" defer></script>
+  <script src="globe.js?v=20261116c" defer></script>
+  <script src="rest.js?v=20261116c" defer></script>
 </body>
 </html>

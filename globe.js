@@ -35,7 +35,7 @@
 
   // land dots: [unit vector, light 0..1]
   let DOTS = [];
-  const ready = fetch('data/globe-dots.bin?v=20261116b').then((r) => r.arrayBuffer()).then((ab) => {
+  const ready = fetch('data/globe-dots.bin?v=20261116c').then((r) => r.arrayBuffer()).then((ab) => {
     const v = new DataView(ab), n = ab.byteLength / 5;
     DOTS = new Array(n);
     for (let i = 0; i < n; i++) DOTS[i] = [vec(v.getInt16(i * 5, true) / 100, v.getInt16(i * 5 + 2, true) / 100), v.getUint8(i * 5 + 4) / 255];

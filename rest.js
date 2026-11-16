@@ -41,7 +41,7 @@
   });
 
   /* ---------- catalog ---------- */
-  fetch('data/catalog.json?v=20261116b').then((r) => r.json()).then(build).catch(() => {
+  fetch('data/catalog.json?v=20261116c').then((r) => r.json()).then(build).catch(() => {
     document.querySelectorAll('[data-needs-catalog]').forEach((n) => n.classList.add('offline'));
   });
 

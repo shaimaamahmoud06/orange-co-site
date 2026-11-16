@@ -1,0 +1,38 @@
+{
+ "watch/mobile": {
+  "settings": "810x1440 q72",
+  "frames": 120,
+  "before": 14082226,
+  "after": 6313906
+ },
+ "fragrance/mobile": {
+  "settings": "810x1440 q72",
+  "frames": 120,
+  "before": 4557298,
+  "after": 2141016
+ },
+ "store/mobile": {
+  "settings": "810x1440 q72",
+  "frames": 160,
+  "before": 6435592,
+  "after": 3361518
+ },
+ "fragrance/desktop": {
+  "settings": "1920x1080 q74",
+  "frames": 120,
+  "before": 4526696,
+  "after": 3518778
+ },
+ "store/desktop": {
+  "settings": "1920x1080 q74",
+  "frames": 160,
+  "before": 6130148,
+  "after": 4908804
+ },
+ "watch-exit/mobile": {
+  "settings": "810x1440 q72",
+  "frames": 40,
+  "before": 2835266,
+  "after": 1368566
+ }
+}
