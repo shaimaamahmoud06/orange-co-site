@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#3A0004">
+<title data-en="Orange & Co" data-ar="أورنج أند كو">Orange & Co</title>
+<link rel="preload" as="image" href="media/watch/desktop/frame_0001.webp" media="(min-aspect-ratio: 1/1)">
+<link rel="preload" as="image" href="media/watch/mobile/frame_0001.webp" media="(max-aspect-ratio: 1/1)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Newsreader:opsz,wght@6..72,400..500&display=swap">
+<style>
+  /* UI pass, Nov 16: one type system loaded the same on every device, the brand's measured palette,
+     one hairline language, a calmer hierarchy. Copy, sections, film and timings are unchanged. */
+  :root { --bg: #3A0004; --beige: #F4DEC4;
+          --ink: #F4DEC4;                       /* brand cream */
+          --ink-soft: rgba(244, 222, 196, .74);
+          --muted: #BCA585;                     /* brand champagne */
+          --accent: #EDD0A6;                    /* brand warm gold, for type */
+          --gold: #d9b26f;                      /* route arc + hairlines (globe.js reads it) */
+          --hair: rgba(237, 208, 166, .4);
+          --latin-display: "Cormorant Garamond", "Cormorant", Garamond, Georgia, serif;
+          --serif: var(--latin-display);        /* display headlines */
+          --sans: "Newsreader", Georgia, serif;  /* body + small UI text (the deck: English body in Newsreader) */
+          --arabic: "Almarai", "Geeza Pro", Tahoma, sans-serif;
+          --dw: 500;                             /* display weight: Cormorant needs 500 to hold up on a phone */
+          --ease: cubic-bezier(.16, 1, .3, 1); }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--serif);
+               -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;
+               font-optical-sizing: auto; }
+  ::selection { background: var(--accent); color: var(--bg); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  /* clamp(0, x, 1) shorthand used below: progress windows on the smoothed scroll --ps */
+
+  /* ---------- page 1: hero (mobile first; desktop keeps the same column, fitted to its size) ---------- */
+  .hero .seq-stage { display: grid; place-items: center; }
+  .hero-col { position: relative; width: min(100%, 680px); height: 100%; text-align: center; padding: 0 24px; }
+  .hero { --k: clamp(0, calc((var(--ps, 0) - 0.06) / 0.32), 1);              /* logo rise + shrink */
+          --a: clamp(0, calc((var(--ps, 0) - 0.22) / 0.16), 1);              /* Arabic line */
+          --b: clamp(0, calc((var(--ps, 0) - 0.46) / 0.18), 1); }            /* route */
+  .logo { position: absolute; left: 50%; top: calc(50% - var(--k) * 28%); width: min(80vw, 360px);
+          transform: translate(-50%, -50%) scale(calc(1 - var(--k) * 0.45)); }
+  .logo img { display: block; width: 100%; height: auto; }
+  .arrow { position: absolute; left: 50%; bottom: 6vh; width: 16px; height: 34px; margin-left: -8px; color: var(--muted);
+           opacity: calc(.8 - clamp(0, calc(var(--ps, 0) / 0.05), 1)); animation: nudge 2.6s var(--ease) infinite; }
+  @keyframes nudge { 50% { transform: translateY(7px); } }
+  .hero .line { position: absolute; left: 24px; right: 24px; top: 36%; margin: 0 auto; max-width: 22ch; font: italic 400 clamp(26px, 7vw, 34px)/1.3 var(--serif);
+        color: var(--accent); opacity: var(--a); transform: translateY(calc((1 - var(--a)) * 12px)); text-wrap: balance; }
+  .en { position: absolute; left: 24px; right: 24px; top: 60%; opacity: var(--b); transform: translateY(calc((1 - var(--b)) * 16px)); }
+  .en .route { margin-top: 0; display: inline-flex; align-items: center; gap: 16px;
+               font: 500 10.5px/1 var(--sans); letter-spacing: .34em; color: var(--accent); }
+  .en .route::before, .en .route::after { content: ""; width: 28px; height: 1px; background: var(--hair); }
+  .en .route::after { margin-left: -.34em; }                              /* optical centring against the tracking */
+
+  /* ---------- page 2: route globe ---------- */
+  .globe .seq-stage { background: var(--bg); }
+
+  /* ---------- film: text blocks fade up at data-at, out at data-out ---------- */
+  .copy { position: absolute; z-index: 1; pointer-events: none; }
+  .copy > * { opacity: 0; transform: translateY(16px); transition: opacity .9s var(--ease), transform 1.1s var(--ease); }
+  .copy > .on { opacity: 1; transform: none; }
+  .kicker { display: flex; align-items: center; gap: 14px; font: 500 10.5px/1.6 var(--sans); letter-spacing: .32em;
+            text-transform: uppercase; color: var(--muted); }
+  .kicker::before { content: ""; flex: none; width: 32px; height: 1px; background: var(--gold); opacity: .85; }
+  .copy h2 { margin-top: 18px; font-weight: 400; font-size: clamp(36px, 4.8vw, 76px); line-height: 1; letter-spacing: -.02em;
+             text-wrap: balance; }
+  .body { margin-top: 20px; font: 400 15px/1.75 var(--sans); color: var(--ink-soft); max-width: 30ch; }
+  .copy.left { left: 8vw; top: 50%; transform: translateY(-50%); max-width: 36vw; }
+  .copy.right { left: auto; right: 7vw; max-width: 30vw; }      /* fragrance lands left of centre on desktop */
+
+  /* store/bag: opens from a clean square-cut window to full screen while its first frame holds, then the bag drops */
+  .card { position: absolute; inset: 0; --k: clamp(0, calc(var(--ps, 0) / 0.16), 1);
+          clip-path: inset(calc((1 - var(--k)) * 16vh) calc((1 - var(--k)) * 22vw) round calc((1 - var(--k)) * 24px)); }
+  .store-copy { left: 8vw; bottom: 9vh; max-width: 40vw; }
+  .store-copy .kicker { color: #d9c7ad; } .store-copy h2 { color: #fbf6ef; } .store-copy .body { color: rgba(240, 228, 212, .8); }
+  .shade { position: absolute; inset: 0; pointer-events: none; opacity: calc(clamp(0, (var(--ps, 0) - 0.42) * 2.6, 1));   /* in under the BAGS label, full by the end */
+           background: linear-gradient(to top, #160c08 0%, rgba(22, 12, 8, .66) 14%, rgba(18, 12, 8, 0) 48%); }
+
+  /* ---------- after the bag: everything sits on beige ---------- */
+  .beige { background: var(--beige); color: #2a1a12; }
+  .end { height: 70vh; display: grid; place-items: center; font: 500 10.5px var(--sans); letter-spacing: .34em; color: #9A7445; }
+
+  @media (min-aspect-ratio: 1/1) {
+    .logo { width: min(34vw, 540px); }
+    .hero .line { top: 38%; font-size: clamp(30px, 2.7vw, 44px); max-width: 26ch; }
+    .en { top: 62%; }
+  }
+  @media (max-aspect-ratio: 1/1) {
+    .copy.left { left: 24px; right: 24px; top: 9vh; transform: none; max-width: none; }
+    /* phones: the watch's last frame fills the screen, so its copy gets a soft burgundy shade while it shows */
+    .copy.left:not(.low)::before { content: ""; position: absolute; z-index: -1; left: -24px; right: -24px; top: -9vh;
+      height: calc(100% + 9vh + 14vh); opacity: 0; transition: opacity .9s var(--ease);
+      background: linear-gradient(to bottom, rgba(58, 0, 4, .94), rgba(58, 0, 4, .72) 55%, rgba(58, 0, 4, 0)); }
+    .copy.left:not(.low):has(> .on)::before { opacity: 1; }
+    .card { clip-path: inset(calc((1 - var(--k)) * 18vh) calc((1 - var(--k)) * 9vw) round calc((1 - var(--k)) * 14px)); }
+    .store-copy { left: 24px; right: 24px; bottom: 7vh; max-width: none; }
+    .copy.right { left: 24px; right: 24px; max-width: none; }
+    .copy.left.low { top: auto; bottom: 7vh; }   /* phones: fragrance text under the bottle, not over the cap */
+  }
+  @media (prefers-reduced-motion: reduce) { .arrow { animation: none; } }
+
+  /* film: category showcases carry the category label only, a touch larger than a plain kicker */
+  .kicker.cat { font-size: 15px; letter-spacing: .4em; color: var(--accent); }
+  .store-copy .kicker.cat { color: #f1e2c9; }
+
+  /* globe: the sentence and the headline over the night earth */
+  .globe-copy { left: 24px; right: 24px; top: 9vh; text-align: center; display: grid; justify-items: center; }
+  .globe-copy::before { content: ""; position: absolute; z-index: -1; left: -24px; right: -24px; top: -9vh; height: calc(100% + 20vh);
+    background: linear-gradient(to bottom, rgba(58, 0, 4, .9), rgba(58, 0, 4, 0)); }
+  .globe-copy .kicker::after { content: ""; flex: none; width: 32px; height: 1px; background: var(--gold); opacity: .85; }
+  .globe-copy h2 { margin-top: 16px; font-size: clamp(34px, 4.4vw, 68px); max-width: 16ch; }
+
+  /* the line right before the watch film */
+  .discover { min-height: 100vh; display: grid; place-items: center; padding: 0 24px; text-align: center; }
+  .discover .title { color: var(--ink); max-width: 14ch; }
+
+  /* language toggle: names the other language, sits above the page on burgundy and beige alike */
+  .lang-toggle { position: fixed; z-index: 40; top: max(env(safe-area-inset-top), 16px); inset-inline-end: 16px; min-height: 40px; padding: 0 16px;
+    border: 1px solid rgba(237, 208, 166, .38); border-radius: 999px; background: rgba(58, 0, 4, .62); color: var(--beige);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); cursor: pointer; font: 400 15px/1 var(--arabic);
+    transition: background .6s var(--ease); }
+  .lang-toggle[lang="en"] { font: 500 11px/1 var(--sans); letter-spacing: .26em; text-transform: uppercase; }
+  .lang-toggle:hover { background: rgba(58, 0, 4, .85); }
+  .lang-toggle:focus-visible { outline: 1px solid var(--beige); outline-offset: 3px; }
+
+  /* =====================================================================================================
+     After the bag: the beige half. One palette (burgundy ink on the brand cream), one hairline, one easing.
+     Motion grammar: scroll-scrubbed (Worlds, manifesto, ribbon), slow rise on entry, line unmasking on titles.
+     ===================================================================================================== */
+  .beige, .vitrine { --ink-b: #3A0004; --soft-b: rgba(58, 0, 4, .74); --mute-b: #7A5A34; --hair-b: rgba(58, 0, 4, .16);
+                     --bronze: #9A7445; --green: #47704C; }
+  .beige { background: var(--beige); color: var(--ink-b); }
+  .beige ::selection, .vitrine ::selection { background: var(--ink-b); color: var(--beige); }
+  .beige .eyebrow, .vitrine .eyebrow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; font: 500 10.5px/1.6 var(--sans);
+    letter-spacing: .32em; text-transform: uppercase; color: var(--mute-b); }
+  .beige .eyebrow::before, .vitrine .eyebrow::before { content: ""; width: 32px; height: 1px; background: currentColor; opacity: .55; }
+  .title { font-weight: 400; font-size: clamp(42px, 6.4vw, 100px); line-height: .98; letter-spacing: -.025em; text-wrap: balance; }
+  .title.big { font-size: clamp(44px, 7.6vw, 128px); }
+  .lede { font: 400 16px/1.7 var(--sans); color: var(--soft-b); max-width: 34ch; }
+  .beige .price, .vitrine .price { font-family: var(--sans); font-variant-numeric: lining-nums tabular-nums; letter-spacing: .02em; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 14px; min-height: 52px; padding: 0 30px;
+         font: 500 11px/1 var(--sans); letter-spacing: .26em; text-transform: uppercase; text-decoration: none; cursor: pointer;
+         border: 0; border-radius: 0; transition: background .6s var(--ease), color .6s var(--ease), border-color .6s var(--ease); }
+  .btn-solid { background: var(--ink-b); color: var(--beige); }
+  .btn-solid:hover { background: #4B0208; }
+  .btn-line { background: none; color: var(--ink-b); padding: 0; min-height: 44px; border-bottom: 1px solid var(--hair-b); }
+  .btn-line:hover { border-color: var(--ink-b); }
+  .btn-line .count { font: 400 15px/1 var(--serif); letter-spacing: 0; color: var(--mute-b); }
+  .btn-ghost { background: none; color: var(--beige); border: 1px solid rgba(244, 222, 196, .55); }
+  .btn-ghost:hover { background: var(--beige); color: #2e4a32; border-color: var(--beige); }
+  .btn:focus-visible, .v-close:focus-visible, .tile:focus-visible, .h-item:focus-visible, .social a:focus-visible { outline: 1px solid currentColor; outline-offset: 5px; }
+
+  /* entry motion: a slow rise, and titles that unmask line by line */
+  [data-reveal] { opacity: 0; transform: translateY(24px);
+                  transition: opacity 1.1s var(--ease) var(--d, 0ms), transform 1.3s var(--ease) var(--d, 0ms); }
+  [data-reveal].in { opacity: 1; transform: none; }
+  [data-lines] > span { display: block; overflow: hidden; padding-bottom: .1em; margin-bottom: -.1em; }
+  [data-lines] > span > span { display: block; transform: translateY(108%); transition: transform 1.4s var(--ease); }
+  [data-lines] > span:nth-child(2) > span { transition-delay: .1s; }
+  [data-lines].in > span > span { transform: none; }
+
+  /* ---------- The Worlds: pinned, the track slides one World per screen; type and object move at different depths ---------- */
+  .worlds { --n: 6; }
+  .worlds .seq-stage { background: var(--beige); }
+  .w-head { position: absolute; z-index: 3; top: 8vh; left: 6vw; right: 6vw; }
+  .w-track { position: absolute; inset: 0 auto 0 0; display: flex; width: calc(var(--n) * 100vw); will-change: transform;
+             transform: translate3d(calc(var(--ps, 0) * (var(--n) - 1) * -100vw), 0, 0); }
+  .w-panel { --l: calc(var(--ps, 0) * (var(--n) - 1) - var(--i)); --al: max(var(--l), calc(var(--l) * -1));
+             position: relative; flex: none; width: 100vw; height: 100%; overflow: hidden; }
+  .w-giant { position: absolute; left: 50%; top: 45%; translate: -50% -50%; margin: 0; white-space: nowrap; font-weight: 400;
+             font-size: clamp(120px, 20vw, 360px); line-height: .8; letter-spacing: -.045em; color: var(--ink-b);
+             transform: translateX(calc(var(--l) * 36vw)); opacity: calc(1 - var(--al) * .7); }
+  .w-hero { position: absolute; left: 50%; top: 45%; width: min(36vw, 56vh, 560px); margin: 0; translate: -50% -50%;
+            transform: translateX(calc(var(--l) * -18vw)) rotate(calc(var(--l) * -9deg)) scale(calc(1 - var(--al) * .16)); }
+  .w-hero img { display: block; width: 100%; height: auto; }
+  .w-meta { position: absolute; left: 6vw; right: 6vw; bottom: 8vh; display: grid; grid-template-columns: 1fr auto; align-items: end;
+            gap: 12px 40px; opacity: calc(1 - var(--al) * 2); transform: translateY(calc(var(--al) * 28px)); }
+  .w-idx { grid-column: 1 / -1; font: 400 12px/1 var(--sans); letter-spacing: .24em; color: var(--mute-b); }
+  .w-idx span:first-child { color: var(--ink-b); }
+  .w-name { font-weight: 400; font-size: clamp(30px, 2.8vw, 46px); line-height: 1.05; letter-spacing: -.02em;
+            display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; }
+  .w-piece { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font: 400 13px/1.5 var(--sans); color: var(--soft-b); }
+  .w-piece .b { font-size: 10.5px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: var(--mute-b); }
+  .w-piece .nm { max-width: 40ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .w-meta .btn { grid-column: 2; grid-row: 2 / span 2; }
+  .w-rule { position: absolute; left: 6vw; right: 6vw; bottom: 4.5vh; height: 1px; background: var(--hair-b); }
+  .w-rule i { position: absolute; inset: 0; background: var(--ink-b); transform-origin: left; transform: scaleX(var(--ps, 0)); }
+
+  /* ---------- The Harrods Edit: two shelves that drift in opposite directions, faster while you scroll ---------- */
+  .harrods { padding: 20vh 0 16vh; }
+  .h-head { padding: 0 6vw; display: grid; justify-items: start; gap: 16px; }
+  .h-head .lede { margin-top: 6px; }
+  .h-head .btn { margin-top: 18px; }
+  .h-rail { margin-top: 10vh; display: grid; gap: 5vh; overflow: hidden;
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+  .h-strip { display: flex; width: max-content; animation: lane 120s linear infinite; }
+  .h-lane.rev .h-strip { animation-direction: reverse; animation-duration: 140s; }
+  .h-rail:hover .h-strip { animation-play-state: paused; }
+  @keyframes lane { to { transform: translateX(-50%); } }
+  .h-item { flex: none; width: clamp(150px, 15vw, 230px); margin-right: clamp(28px, 4vw, 64px); display: grid; gap: 6px;
+            text-decoration: none; color: var(--ink-b); }
+  .h-item img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: contain; transition: transform .9s var(--ease); }
+  .h-item:hover img { transform: translateY(-10px); }
+  .h-cap { display: grid; gap: 3px; padding: 0 8%; font: 400 12.5px/1.45 var(--sans); color: var(--soft-b); }
+  .h-cap .nm { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* ---------- Why Orange & Co: the paragraph fills from faint to ink as you read it ---------- */
+  .why .seq-stage { display: grid; place-items: center; }
+  .why-inner { width: min(88vw, 1080px); display: grid; gap: 5vh; }
+  .manifesto { font-weight: 400; font-size: clamp(30px, 4.4vw, 70px); line-height: 1.22; letter-spacing: -.012em; color: var(--ink-b); }
+  .manifesto span { opacity: calc(.13 + .87 * clamp(0, var(--ps, 0) * (var(--n) + 12) - var(--i), 1)); }
+  .beats { padding: 4vh 6vw 18vh; display: grid; gap: 12vh; }
+  .beat-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hair-b); }
+  .beat-list li { display: grid; align-content: start; gap: 14px; padding-block: 4vh 0; padding-inline: 0 2.4vw; }
+  .beat-list li + li { border-inline-start: 1px solid var(--hair-b); padding-inline-start: 2.4vw; }
+  .beat-list .num { font: 400 15px/1 var(--serif); color: var(--mute-b); }
+  .beat-list .t { font: 400 clamp(30px, 3.2vw, 54px)/1 var(--serif); letter-spacing: -.02em; }
+
+  /* ---------- The Gifting Atelier: the ribbon draws, then ties, as you scroll ---------- */
+  .atelier { --t: clamp(0, calc(var(--ps, 0) * 4 - .15), 1); }
+  .atelier .seq-stage { display: grid; align-items: center; }
+  .a-grid { width: min(88vw, 1240px); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6vw; align-items: center; }
+  .a-copy { display: grid; justify-items: start; gap: 18px; opacity: var(--t); transform: translateY(calc((1 - var(--t)) * 24px)); }
+  .a-copy .btn { margin-top: 14px; }
+  .a-gift { position: relative; margin: 0; aspect-ratio: 4 / 5; }
+  .a-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transform: scale(calc(.94 + var(--ps, 0) * .06)); }
+  .a-img { opacity: 0; transition: opacity 1.6s var(--ease); }
+  .a-img.on { opacity: 1; }   /* the four approved gifts take turns under the ribbon */
+  .ribbon { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .ribbon path { stroke: var(--bronze); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1;
+                 vector-effect: non-scaling-stroke; }
+  .ribbon path:nth-child(1) { stroke-dashoffset: calc(1 - clamp(0, calc(var(--ps, 0) * 2.6 - .2), 1)); }
+  .ribbon path:nth-child(2) { stroke-dashoffset: calc(1 - clamp(0, calc(var(--ps, 0) * 2.6 - .6), 1)); }
+  .ribbon .bow { stroke-width: 1.6; stroke-dashoffset: calc(1 - clamp(0, calc(var(--ps, 0) * 2.2 - 1), 1)); }
+
+  /* ---------- Orange & Co Friends: the logo green, held inside the beige page ---------- */
+  .friends { padding: 4vh 6vw 16vh; }
+  .f-panel { background: var(--green); color: var(--beige); display: grid; justify-items: center; text-align: center; gap: 14px;
+             padding: clamp(56px, 10vw, 140px) clamp(24px, 6vw, 96px); }
+  .f-title { font-weight: 400; font-size: clamp(40px, 5.6vw, 88px); line-height: 1; letter-spacing: -.025em; }
+  .friends .lede { color: rgba(244, 222, 196, .9); max-width: 32ch; }
+  .f-panel .btn { margin-top: 22px; }
+
+  /* ---------- Finale ---------- */
+  .finale { padding: 16vh 6vw 0; display: grid; justify-items: center; text-align: center; gap: 22px; overflow: hidden; }
+  .finale .btn { margin-top: 18px; }
+  .social { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 36px; margin-top: 7vh; }
+  .social a { padding: 14px 0; font: 500 10.5px/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--ink-b);
+              text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .6s var(--ease); }
+  .social a:hover { border-color: var(--ink-b); }
+  .house { width: 100%; margin-top: 9vh; padding-top: 22px; border-top: 1px solid var(--hair-b); }
+  .house p { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px 24px; font: 400 13px/1.4 var(--sans); color: var(--mute-b); }
+  .wordmark { width: 100%; margin: 4vh 0 -2.4vw; font-weight: 400; font-size: 16vw; line-height: .8; letter-spacing: -.05em;
+              white-space: nowrap; color: var(--ink-b); }
+
+  /* ---------- the Vitrine: every photographed piece of a World ---------- */
+  html.locked, html.locked body { overflow: hidden; }
+  .vitrine { position: fixed; inset: 0; z-index: 50; overflow-y: auto; overscroll-behavior: contain; background: var(--beige); color: var(--ink-b);
+             clip-path: inset(100% 0 0 0); transition: clip-path 1.05s var(--ease); }
+  .vitrine.open { clip-path: inset(0 0 0 0); }
+  .v-bar { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px;
+           padding: max(env(safe-area-inset-top), 30px) 6vw 22px; border-bottom: 1px solid var(--hair-b);
+           background: rgba(244, 222, 196, .9); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+  .v-title { margin-top: 12px; font-weight: 400; font-size: clamp(36px, 5vw, 76px); line-height: 1; letter-spacing: -.025em; }
+  .v-close { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer;
+             color: var(--ink-b); font: 500 10.5px/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; }
+  .v-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.2; transition: transform .7s var(--ease); }
+  .v-close:hover svg { transform: rotate(90deg); }
+  .v-grid { list-style: none; margin: 0; padding: 6vh 6vw; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7vh 2.6vw; }
+  .tile { display: grid; gap: 6px; text-decoration: none; color: var(--ink-b); }
+  .ph { position: relative; display: block; aspect-ratio: 4 / 5;
+        background: radial-gradient(64% 56% at 50% 58%, rgba(255, 248, 238, .9), rgba(255, 248, 238, 0) 74%); }
+  .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: transform 1s var(--ease); }
+  .tile:hover .ph img { transform: translateY(-10px); }
+  .k-frame .ph { background: rgba(58, 0, 4, .045); }
+  .k-frame .ph img { inset: 9%; width: 82%; height: 82%; background: #fff; box-shadow: 0 22px 44px -18px rgba(58, 0, 4, .35); }
+  .tile .b { margin-top: 10px; min-height: 1.4em; font: 500 10px/1.4 var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--mute-b); }
+  .tile .n { font: 400 17px/1.25 var(--serif); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tile .price { font-size: 13px; color: var(--soft-b); }
+  .v-foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+            padding: 5vh 6vw max(env(safe-area-inset-bottom), 7vh); border-top: 1px solid var(--hair-b); font: 400 13px var(--sans); color: var(--mute-b); }
+
+  @media (max-aspect-ratio: 1/1) {
+    .w-head { top: 9vh; left: 24px; right: 24px; }
+    .w-giant { top: 39%; font-size: 34vw; }
+    .w-hero { top: 39%; width: min(72vw, 40vh); }
+    .w-meta { left: 24px; right: 24px; bottom: 9vh; grid-template-columns: 1fr; gap: 10px; }
+    .w-meta .btn { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 6px; }
+    .w-piece .nm { max-width: 26ch; }
+    .w-rule { left: 24px; right: 24px; bottom: 5vh; }
+    .h-head, .beats, .friends, .finale { padding-left: 24px; padding-right: 24px; }
+    .manifesto { font-size: clamp(25px, 7.2vw, 34px); line-height: 1.24; }
+    .beat-list { grid-template-columns: 1fr; border-top: 0; }
+    .beat-list li, .beat-list li + li { border-inline-start: 0; border-top: 1px solid var(--hair-b); padding: 3.4vh 0; }
+    .a-grid { grid-template-columns: 1fr; gap: 3vh; }
+    .a-gift { order: -1; width: min(66vw, 36vh); justify-self: center; }
+    .v-bar { padding-left: 24px; padding-right: 24px; }
+    .v-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5vh 5vw; padding: 4vh 24px; }
+    .v-foot { padding-left: 24px; padding-right: 24px; }
+    .wordmark { font-size: 16vw; }
+    .house p { flex-direction: column; align-items: center; text-align: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal], [data-lines] > span > span { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .h-strip { animation: none; } .h-rail { overflow-x: auto; }
+    .worlds .seq-stage { position: static !important; height: auto !important; }
+    .worlds .w-track { position: static; transform: none; flex-direction: column; width: 100%; }
+    .worlds .w-panel { width: 100%; height: 100vh; --l: 0; --al: 0; }
+    .vitrine { transition: none; }
+  }
+
+  /* ---------- type: Cormorant Garamond display at a weight that holds on a phone ---------- */
+  .title, .copy h2, .w-giant, .w-name, .manifesto, .beat-list .t, .f-title, .v-title, .tile .n, .wordmark { font-weight: var(--dw); }
+  .wordmark { font-family: var(--latin-display); }   /* the same Latin logotype in both languages */
+
+  /* ---------- Arabic version: Almarai throughout, right to left, no tracking, room for the script ---------- */
+  html[lang="ar"] { --serif: var(--arabic); --sans: var(--arabic); --dw: 300; }
+  html[lang="ar"] body *:not(.wordmark):not(.wordmark *):not(.price):not(.w-idx *) { letter-spacing: 0 !important; }
+  html[lang="ar"] .hero .line { font-style: normal; font-weight: 400; font-size: clamp(22px, 5.6vw, 28px); line-height: 1.75; }
+  html[lang="ar"] .kicker, html[lang="ar"] .eyebrow, html[lang="ar"] .btn, html[lang="ar"] .social a, html[lang="ar"] .v-close { font-size: 14px; font-weight: 400; }
+  html[lang="ar"] .kicker.cat { font-size: 20px; }
+  html[lang="ar"] .route { font-size: 14px; font-weight: 400; }
+  html[lang="ar"] .title, html[lang="ar"] .copy h2, html[lang="ar"] .f-title, html[lang="ar"] .v-title { line-height: 1.4; }
+  html[lang="ar"] .title { font-size: clamp(34px, 5.2vw, 82px); }
+  html[lang="ar"] .title.big { font-size: clamp(36px, 6vw, 100px); }
+  html[lang="ar"] .w-giant { font-size: clamp(90px, 15vw, 270px); line-height: 1.2; }
+  html[lang="ar"] .w-name { line-height: 1.4; }
+  html[lang="ar"] .manifesto { line-height: 1.75; font-size: clamp(26px, 3.6vw, 56px); }
+  html[lang="ar"] .f-title { font-size: clamp(32px, 4.6vw, 72px); text-wrap: balance; }
+  html[lang="ar"] .beat-list .t { line-height: 1.45; font-size: clamp(26px, 2.6vw, 44px); }
+  html[lang="ar"] .lede, html[lang="ar"] .tile .n { line-height: 1.8; }
+  html[lang="ar"] [data-lines] > span { padding-bottom: .25em; margin-bottom: -.25em; }
+  /* motion that runs on the x axis stays left to right; the words inside it read right to left */
+  html[lang="ar"] .w-track, html[lang="ar"] .h-rail { direction: ltr; }
+  html[lang="ar"] .w-panel, html[lang="ar"] .h-cap { direction: rtl; }
+  @media (min-aspect-ratio: 1/1) { html[lang="ar"] .hero .line { font-size: clamp(28px, 2.4vw, 40px); } }
+  @media (max-aspect-ratio: 1/1) {
+    html[lang="ar"] .w-giant { font-size: 26vw; }
+    html[lang="ar"] .manifesto { font-size: clamp(22px, 6.2vw, 30px); }
+    .globe-copy .kicker { letter-spacing: .22em; }
+  }
+
+  /* hero: the monogram as a slow-turning watermark in the burgundy, texture rather than a second logo */
+  .hero .seq-stage { overflow: hidden; }
+  .hero-mark { position: absolute; left: 50%; top: 50%; width: min(150vmin, 1400px); height: auto; translate: -50% -50%; pointer-events: none;
+               opacity: calc(.055 * (1 - clamp(0, (var(--ps, 0) - .76) / .2, 1))); animation: mark-turn 360s linear infinite; }   /* gone before the page moves on */
+  @keyframes mark-turn { to { rotate: 360deg; } }
+  @media (max-aspect-ratio: 1/1) { .hero-mark { width: 175vmin; } }
+
+  /* the boutique line under BAGS */
+  .store-copy .boutique { margin-top: 12px; font: italic 400 clamp(17px, 1.5vw, 22px)/1.45 var(--serif); color: rgba(251, 246, 239, .92); max-width: 28ch; }
+  html[lang="ar"] .store-copy .boutique { font: 400 19px/1.8 var(--arabic); }
+
+  /* beats headline: a slow light passes across the words */
+  .beats-title { font-size: clamp(34px, 4.6vw, 72px); margin-bottom: -4vh; }
+  .beats-title > span > span { background: linear-gradient(100deg, var(--ink-b) 0%, var(--ink-b) 42%, #B08A55 50%, var(--ink-b) 58%, var(--ink-b) 100%);
+    background-size: 260% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: sheen 9s ease-in-out 1.6s infinite; }
+  @keyframes sheen { 0%, 22% { background-position: 100% 0; } 62%, 100% { background-position: 0% 0; } }
+
+  .v-foot .btn-line { color: var(--ink-b); }
+  .v-foot { justify-content: flex-start; } .v-foot p { flex: 1 1 100%; }
+  @media (min-width: 700px) { .v-foot p { flex: 1 1 auto; } }
+
+  @media (prefers-reduced-motion: reduce) { .hero-mark, .beats-title > span > span { animation: none; } }
+
+  /* watch + fragrance: slow light drifting round the edges in the stage's own colours, and a soft edge shadow,
+     so the product sits in a pool of light that dissolves into the page instead of ending at the frame */
+  .amb { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .amb::after { content: ""; position: absolute; inset: -2px;
+    background: linear-gradient(to bottom, #3A0004 0%, rgba(58, 0, 4, .7) 5%, rgba(58, 0, 4, 0) 17%, rgba(58, 0, 4, 0) 83%, rgba(58, 0, 4, .7) 95%, #3A0004 100%),
+                radial-gradient(ellipse 78% 62% at 50% 48%, rgba(30, 0, 2, 0) 0%, rgba(30, 0, 2, 0) 46%, rgba(30, 0, 2, .16) 64%, rgba(30, 0, 2, .38) 82%, rgba(26, 0, 2, .55) 100%); }
+  .amb i { position: absolute; left: 50%; top: 50%; width: 90vmax; height: 90vmax; margin: -45vmax 0 0 -45vmax; border-radius: 50%;
+           mix-blend-mode: screen; will-change: transform;
+           -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 30%, rgba(0,0,0,.22) 50%, transparent 70%);
+                   mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 30%, rgba(0,0,0,.22) 50%, transparent 70%); }
+  .amb .g1 { background: rgba(98, 15, 19, .62); animation: drift1 29s ease-in-out infinite alternate; }
+  .amb .g2 { background: rgba(120, 22, 24, .42); animation: drift2 37s ease-in-out infinite alternate; }
+  .amb .g3 { background: rgba(214, 140, 92, .10); width: 60vmax; height: 60vmax; margin: -30vmax 0 0 -30vmax; animation: drift3 43s ease-in-out infinite alternate; }
+  /* the paths stay out at the edges: the product in the middle is never brightened */
+  @keyframes drift1 { 0% { transform: translate(-46vw, -34vh); } 50% { transform: translate(40vw, -42vh); } 100% { transform: translate(48vw, 30vh); } }
+  @keyframes drift2 { 0% { transform: translate(44vw, 40vh); } 50% { transform: translate(-42vw, 44vh); } 100% { transform: translate(-50vw, -18vh); } }
+  @keyframes drift3 { 0% { transform: translate(-40vw, 38vh); } 50% { transform: translate(-48vw, -10vh); } 100% { transform: translate(36vw, -40vh); } }
+  @media (prefers-reduced-motion: reduce) { .amb i { animation: none; } }
+
+  /* store to beige: the deep end of the store's shade warms into the cream over most of a screen */
+  .to-beige { position: relative; height: 60vh; margin: -3px 0 -1px;
+    background: linear-gradient(to bottom, #160c08 0%, #3a2216 18%, #7a5a44 42%, #c9ab8e 70%, #ead2b8 88%, var(--beige) 100%); }
+</style>
+</head>
+<body>
+  <button class="lang-toggle" type="button" data-lang-toggle><span data-en="العربية" data-ar="English">العربية</span></button>
+
+  <!-- page 1: logo lockup on burgundy; scrolling raises it, then the line, then the route -->
+  <section class="hero" data-pin="220">
+    <img class="hero-mark" src="media/monogram.svg" alt="" aria-hidden="true" decoding="async">
+    <div class="hero-col">
+      <div class="logo"><img src="media/logo.svg" alt="Orange &amp; Co" data-alt-en="Orange &amp; Co" data-alt-ar="أورنج أند كو"></div>
+      <p class="line" data-en="Your destination for the world's finest brands and the pleasure of luxury shopping." data-ar="وجهتك لأرقى العلامات العالمية ومتعة التسوق الفاخر">Your destination for the world's finest brands and the pleasure of luxury shopping.</p>
+      <div class="en">
+        <p class="route" data-en="LONDON · PARIS · TRIPOLI" data-ar="لندن · باريس · طرابلس">LONDON · PARIS · TRIPOLI</p>
+      </div>
+      <svg class="arrow" viewBox="0 0 16 34" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 1v31M3 27l5 5 5-5"/></svg>
+    </div>
+  </section>
+
+  <!-- page 2: route globe, the gold arc draws London -> Paris -> Tripoli with the scroll -->
+  <section class="globe" data-pin="260" data-globe aria-label="Route: London, Paris, Tripoli" data-aria-en="Route: London, Paris, Tripoli" data-aria-ar="المسار: لندن، باريس، طرابلس">
+    <canvas></canvas>
+    <div class="copy globe-copy">
+      <p class="kicker" data-at="0.04" data-out="0.24" data-en="Across cities, brought to you" data-ar="من مدن العالم، حتى بابك.">Across cities, brought to you</p>
+      <h2 data-at="0.07" data-out="0.24" data-en="From the world's finest addresses." data-ar="من أرقى وجهات العالم.">From the world's finest addresses.</h2>
+    </div>
+  </section>
+
+  <!-- the film's opening line, right before the watch -->
+  <section class="discover">
+    <h2 class="title" data-lines><span><span data-en="Discover what is exceptional." data-ar="اكتشف ما هو استثنائي">Discover what is exceptional.</span></span></h2>
+  </section>
+
+  <!-- film: watch page (reveal, then the exit bridge), then the fragrance page. Category showcases: the label only.
+       Each first frame holds as a poster until its page is reached, each last frame holds after it plays. -->
+  <section data-seq='{"segments":[
+      {"src":"media/watch/","frames":120,"length":320,"hold":[40,120]},
+      {"src":"media/watch-exit/","frames":40,"length":110},
+      {"src":"media/fragrance/","frames":120,"length":330,"fadeIn":40,"hold":[40,140]}]}'>
+    <canvas></canvas>
+    <div class="amb" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
+    <div class="copy left">
+      <p class="kicker cat" data-at="0.30" data-out="0.42" data-en="WATCHES" data-ar="الساعات">WATCHES</p>
+    </div>
+    <div class="copy left right low">
+      <p class="kicker cat" data-at="0.87" data-en="FRAGRANCE" data-ar="العطور">FRAGRANCE</p>
+    </div>
+  </section>
+
+  <!-- bag page: card grows to full screen on the first frame, the bag drops onto the table, the camera pulls back -->
+  <section data-seq='{"segments":[{"src":"media/store/","frames":160,"length":460,"hold":[120,140]}]}'>
+    <div class="card"><canvas></canvas><div class="shade"></div></div>
+    <div class="copy store-copy">
+      <p class="kicker cat" data-at="0.45" data-en="BAGS" data-ar="الحقائب">BAGS</p>
+      <p class="body boutique" data-at="0.9" data-en="In the boutique, waiting to be discovered." data-ar="في البوتيك، بانتظار اكتشافك">In the boutique, waiting to be discovered.</p>
+    </div>
+  </section>
+
+  <!-- after the bag the page switches to beige: everything below sits on #F4DEC4 -->
+  <div class="beige">
+    <div class="to-beige" aria-hidden="true"></div>
+
+    <!-- The Worlds: a pinned horizontal journey, one door per World (Fashion, Home & Gifting, Beauty) -->
+    <section class="worlds" id="worlds" data-pin="440" data-needs-catalog aria-label="The Worlds" data-aria-en="The Worlds" data-aria-ar="العوالم">
+      <header class="w-head">
+        <p class="eyebrow"><span data-en="The Worlds" data-ar="العوالم">The Worlds</span></p>
+      </header>
+      <div class="w-track"></div>
+      <div class="w-rule" aria-hidden="true"><i></i></div>
+    </section>
+
+    <!-- The Harrods Edit: London -->
+    <section class="harrods" id="harrods" aria-labelledby="harrods-title">
+      <div class="h-head">
+        <p class="eyebrow" data-reveal><span data-en="LONDON" data-ar="لندن">LONDON</span></p>
+        <h2 class="title" id="harrods-title" data-lines><span><span data-en="The Harrods Edit" data-ar="مختارات هارودز">The Harrods Edit</span></span></h2>
+        <p class="lede" data-reveal style="--d:200ms" data-en="Harrods own-label, gift sets and chocolates, bought in London." data-ar="منتجات هارودز الخاصة، ومجموعات الهدايا والشوكولاتة، تُشترى في لندن.">Harrods own-label, gift sets and chocolates, bought in London.</p>
+        <button class="btn btn-line" type="button" data-harrods data-reveal style="--d:280ms"><span data-en="See the Harrods Edit" data-ar="عرض مختارات هارودز">See the Harrods Edit</span><span class="count"></span></button>
+      </div>
+      <div class="h-rail" data-needs-catalog></div>
+    </section>
+
+    <!-- Why Orange & Co: the paragraph fills word by word with the scroll -->
+    <section class="why" id="why" data-pin="150">
+      <div class="why-inner">
+        <p class="eyebrow"><span data-en="WHY ORANGE &amp; CO" data-ar="لماذا أورنج أند كو">WHY ORANGE &amp; CO</span></p>
+        <p class="manifesto" data-words data-en="Sourced in London and Paris. Selected with intention. From timeless pieces to special finds, we bring the world's finest selections closer to you. By La Porta Di Roma." data-ar="مختارات من عالم الفخامة، نأتي بها من لندن وباريس. نختارها بعناية، ونقربها إليك، ونهتم بكل تفصيل. من لا بورتا دي روما.">Sourced in London and Paris. Selected with intention. From timeless pieces to special finds, we bring the world's finest selections closer to you. By La Porta Di Roma.</p>
+      </div>
+    </section>
+    <section class="beats" aria-label="How it works" data-aria-en="How it works" data-aria-ar="كيف يعمل">
+      <h2 class="title beats-title" data-lines><span><span data-en="A world of choice, your way." data-ar="خيارات متعددة، على طريقتك.">A world of choice, your way.</span></span></h2>
+      <ol class="beat-list">
+        <li data-reveal><span class="num">I</span><span class="t" data-en="Available Now, In our collection" data-ar="متوفرة الآن ضمن مختاراتنا">Available Now, In our collection</span></li>
+        <li data-reveal style="--d:120ms"><span class="num">II</span><span class="t" data-en="Sourced For You" data-ar="تُجلب خصيصًا لك">Sourced For You</span></li>
+        <li data-reveal style="--d:240ms"><span class="num">III</span><span class="t" data-en="Made For Gifting" data-ar="اختيارات تليق بالإهداء">Made For Gifting</span></li>
+      </ol>
+    </section>
+
+    <!-- The Gifting Atelier: a gold ribbon ties itself around a real Harrods gift set as you scroll -->
+    <section class="atelier" id="atelier" data-pin="130" aria-labelledby="atelier-title">
+      <div class="a-grid">
+        <div class="a-copy">
+          <p class="eyebrow"><span data-en="THE GIFTING ATELIER" data-ar="أتيليه الهدايا">THE GIFTING ATELIER</span></p>
+          <h2 class="title" id="atelier-title" data-en="When it's a gift, we gift it properly." data-ar="وإن كانت هدية، نقدّمها كما يجب.">When it's a gift, we gift it properly.</h2>
+          <p class="lede" data-en="Curated, wrapped, ready." data-ar="مختارة بعناية، ومغلّفة، وجاهزة.">Curated, wrapped, ready.</p>
+          <a class="btn btn-solid" href="https://ig.me/m/orangeandco.it" target="_blank" rel="noopener" data-en="Plan a gift on Instagram" data-ar="خطّط لهديتك عبر إنستغرام">Plan a gift on Instagram</a>
+        </div>
+        <figure class="a-gift">
+          <img class="a-img on" src="media/products/7728438000000862055.webp" alt="Guerlain x Harrods Royal Extract III Eau de Parfum" data-alt-en="Guerlain x Harrods Royal Extract III Eau de Parfum" data-alt-ar="غيرلان × هارودز، عطر رويال إكستراكت III" decoding="async">
+          <img class="a-img" src="media/products/7728438000000853453.webp" alt="Hind Al Oud Pink Lux gift box" data-alt-en="Hind Al Oud Pink Lux gift box" data-alt-ar="هند العود، علبة هدية بينك لوكس" decoding="async" loading="lazy">
+          <img class="a-img" src="media/products/7728438000000731747.webp" alt="Dior Oblique silk square in bordeaux" data-alt-en="Dior Oblique silk square in bordeaux" data-alt-ar="ديور، وشاح حريري أوبليك بلون العنابي" decoding="async" loading="lazy">
+          <img class="a-img" src="media/products/7728438000001515218.webp" alt="Harrods PJ Bear" data-alt-en="Harrods PJ Bear" data-alt-ar="دب هارودز بالبيجاما" decoding="async" loading="lazy">
+          <svg class="ribbon" viewBox="0 0 400 500" fill="none" aria-hidden="true">
+            <path pathLength="1" d="M200 -10 V510"/>
+            <path pathLength="1" d="M-10 385 H410"/>
+            <path pathLength="1" class="bow" d="M200 385 C150 315, 92 335, 112 371 C128 401, 182 397, 200 385 C218 397, 272 401, 288 371 C308 335, 250 315, 200 385 M200 385 L168 457 M200 385 L232 457"/>
+          </svg>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Orange & Co Friends: the logo green, held inside the beige page -->
+    <section class="friends" aria-labelledby="friends-title">
+      <div class="f-panel" data-reveal>
+        <h2 class="f-title" id="friends-title" data-en="Orange &amp; Co Friends" data-ar="أصدقاء أورنج أند كو">Orange &amp; Co Friends</h2>
+        <p class="lede" data-en="First access to the exclusives and sourced rarities." data-ar="أولوية الوصول إلى الحصريات والقطع النادرة.">First access to the exclusives and sourced rarities.</p>
+        <a class="btn btn-ghost" href="https://ig.me/m/orangeandco.it" target="_blank" rel="noopener" data-en="Ask to be let in" data-ar="اطلب الانضمام">Ask to be let in</a>
+      </div>
+    </section>
+
+    <!-- Finale -->
+    <footer class="finale">
+      <h2 class="title big" data-lines><span><span data-en="One message on Instagram," data-ar="رسالة واحدة على إنستغرام،">One message on Instagram,</span></span> <span><span data-en="and it's handled." data-ar="ويتم الأمر.">and it's handled.</span></span></h2>
+      <a class="btn btn-solid" href="https://ig.me/m/orangeandco.it" target="_blank" rel="noopener" data-reveal style="--d:260ms" data-en="Message us on Instagram" data-ar="راسلنا عبر إنستغرام">Message us on Instagram</a>
+      <nav class="social" aria-label="Follow Orange &amp; Co" data-aria-en="Follow Orange &amp; Co" data-aria-ar="تابع أورنج أند كو" data-reveal style="--d:340ms">
+        <a href="https://www.instagram.com/orangeandco.it/" target="_blank" rel="noopener" data-en="Instagram" data-ar="إنستغرام">Instagram</a>
+        <a href="https://www.tiktok.com/@orangeandco.it" target="_blank" rel="noopener" data-en="TikTok" data-ar="تيك توك">TikTok</a>
+        <a href="https://www.snapchat.com/add/orangeandco.it" target="_blank" rel="noopener" data-en="Snapchat" data-ar="سناب شات">Snapchat</a>
+        <a href="https://www.facebook.com/profile.php?id=61585612289200" target="_blank" rel="noopener" data-en="Facebook" data-ar="فيسبوك">Facebook</a>
+      </nav>
+      <div class="house">
+        <p data-en="A house of La Porta Di Roma" data-ar="من دار لا بورتا دي روما">A house of La Porta Di Roma</p>
+      </div>
+      <p class="wordmark" aria-hidden="true" data-lines><span><span>Orange &amp; Co</span></span></p>
+    </footer>
+  </div>
+
+  <!-- the Vitrine: every photographed piece of a World, opened from its door -->
+  <div class="vitrine" role="dialog" aria-modal="true" aria-labelledby="v-title" hidden>
+    <header class="v-bar">
+      <div class="v-head">
+        <p class="eyebrow"><span class="v-count"></span></p>
+        <h2 class="v-title" id="v-title"></h2>
+      </div>
+      <button class="v-close" type="button" aria-label="Close" data-aria-en="Close" data-aria-ar="إغلاق"><span data-en="Close" data-ar="إغلاق">Close</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16"/></svg></button>
+    </header>
+    <ul class="v-grid"></ul>
+    <footer class="v-foot">
+      <p data-en="Prices as listed, in euro." data-ar="الأسعار كما هي مذكورة، باليورو.">Prices as listed, in euro.</p>
+      <a class="btn btn-solid" href="https://ig.me/m/orangeandco.it" target="_blank" rel="noopener" data-en="Ask on Instagram" data-ar="اسألنا على إنستغرام">Ask on Instagram</a>
+    </footer>
+  </div>
+
+  <script src="lang.js?v=20261116b"></script>
+  <script src="scroll-seq.js?v=20261116b" defer></script>
+  <script src="globe.js?v=20261116b" defer></script>
+  <script src="rest.js?v=20261116b" defer></script>
+</body>
+</html>
